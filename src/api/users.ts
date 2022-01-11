@@ -9,7 +9,6 @@ export const getUserInfo = async(token: string) => {
   if (res.data.length < 1) {
     return { data: undefined }
   }
-  console.log(res.data)
   return {
     data: {
       user: {
