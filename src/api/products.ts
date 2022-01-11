@@ -11,11 +11,23 @@ export const defaultProductData: IProductData = {
   picture_id: ''
 }
 
-export const getProducts = async() =>
-  await request({
-    url: '/query?sql=select *, products.id as id from products join pictures on products.picture_id=pictures.id join product_categories on products.id=product_categories.product_id order by products.id',
+export const getProducts = async(param:{limit:number, page:number, name?:string, description?:string, category?:string}) => {
+  let sql = 'select *, products.id as id from products join pictures on products.picture_id=pictures.id left join product_categories on products.id=product_categories.product_id'
+  if (param.name || param.description || param.category) {
+    sql += ' where'
+    const conditions = []
+    if (param.name) conditions.push(` products.name like '%25${param.name}%25'`)
+    if (param.description) conditions.push(` products.description like '%25${param.description}%25'`)
+    if (param.category) conditions.push(` product_categories.category_id='${param.category}'`)
+    sql += conditions.join(' and ')
+  }
+  sql += ' order by products.id'
+  sql += ` limit ${param.limit} offset ${(param.page - 1) * param.limit}`
+  return await request({
+    url: `query?sql=${sql}`,
     method: 'get'
   })
+}
 
 // export const getArticle = (id: number, params: any) =>
 //   request({
@@ -23,6 +35,12 @@ export const getProducts = async() =>
 //     method: 'get',
 //     params
 //   })
+
+export const getTotal = async() =>
+  await request({
+    url: '/query?sql=select count(*)  from products',
+    method: 'get'
+  })
 
 export const createProducts = async(product: IProductData) => {
   const pictureRes = await request({

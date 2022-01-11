@@ -56,7 +56,7 @@
       fit
       highlight-current-row
       style="width: 100%;"
-      @sort-change="sortChange"
+getSortClass
     >
       <el-table-column
         label="ID"
@@ -64,7 +64,6 @@
         sortable="custom"
         align="center"
         width="150"
-        :class-name="getSortClass('id')"
       >
         <template slot-scope="{row}">
           <span>{{ row.id }}</span>
@@ -80,9 +79,9 @@
       <el-table-column label="商品類型" min-width="80px">
         <template slot-scope="{row}">
           <span class="link-type" @click="handleUpdate(row)">{{
-            categoryList.find(
-              item => item.id === row.category_id
-            ).name
+           (categoryList.find(
+              item => item.id === row.category_id) || {name: ''}).name
+
           }}</span>
         </template>
       </el-table-column>
@@ -205,11 +204,9 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { Form } from 'element-ui'
 import { cloneDeep } from 'lodash'
-import { getProducts, defaultProductData, createProducts, updateProduct } from '@/api/products'
+import { getProducts, defaultProductData, createProducts, updateProduct, getTotal } from '@/api/products'
 import { getCategories } from '@/api/categories'
-import { IArticleData, ICategoryData, IProductData } from '@/api/types'
-import { exportJson2Excel } from '@/utils/excel'
-import { formatJson } from '@/utils'
+import { ICategoryData, IProductData } from '@/api/types'
 import Pagination from '@/components/Pagination/index.vue'
 
 const calendarTypeOptions = [
@@ -247,10 +244,9 @@ export default class extends Vue {
   private listQuery = {
     page: 1,
     limit: 20,
-    importance: undefined,
-    title: undefined,
-    type: undefined,
-    sort: '+id'
+    name: undefined,
+    description: undefined,
+    category: undefined
   };
 
   private importanceOptions = [1, 2, 3];
@@ -300,9 +296,9 @@ export default class extends Vue {
 
   private async getList() {
     this.listLoading = true
-    const { data } = await getProducts()
+    const { data } = await getProducts(this.listQuery)
     this.list = data
-    this.total = data.length
+    this.total = (await getTotal()).data.count
     // Just to simulate the time of the request
     setTimeout(() => {
       this.listLoading = false
@@ -320,27 +316,6 @@ export default class extends Vue {
       type: 'success'
     })
     row.status = status
-  }
-
-  private sortChange(data: any) {
-    const { prop, order } = data
-    if (prop === 'id') {
-      this.sortByID(order)
-    }
-  }
-
-  private sortByID(order: string) {
-    if (order === 'ascending') {
-      this.listQuery.sort = '+id'
-    } else {
-      this.listQuery.sort = '-id'
-    }
-    this.handleFilter()
-  }
-
-  private getSortClass(key: string) {
-    const sort = this.listQuery.sort
-    return sort === `+${key}` ? 'ascending' : 'descending'
   }
 
   private resetTempProductData() {
