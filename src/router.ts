@@ -35,24 +35,25 @@ export default new Router({
       component: () => import(/* webpackChunkName: "404" */ '@/views/404.vue'),
       meta: { hidden: true }
     },
+    // {
+    //   path: '/',
+    //   component: Layout,
+    //   redirect: '/dashboard',
+    //   children: [
+    //     {
+    //       path: 'dashboard',
+    //       component: () => import(/* webpackChunkName: "dashboard" */ '@/views/dashboard/index.vue'),
+    //       meta: {
+    //         title: 'Dashboard',
+    //         icon: 'dashboard'
+    //       }
+    //     }
+    //   ]
+    // },
     {
       path: '/',
       component: Layout,
-      redirect: '/dashboard',
-      children: [
-        {
-          path: 'dashboard',
-          component: () => import(/* webpackChunkName: "dashboard" */ '@/views/dashboard/index.vue'),
-          meta: {
-            title: 'Dashboard',
-            icon: 'dashboard'
-          }
-        }
-      ]
-    },
-    {
-      path: '/products',
-      component: Layout,
+      redirect: '/products',
       children: [
         {
           path: 'products',
