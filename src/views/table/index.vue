@@ -56,14 +56,13 @@
       fit
       highlight-current-row
       style="width: 100%;"
-getSortClass
     >
       <el-table-column
         label="ID"
         prop="id"
         sortable="custom"
         align="center"
-        width="150"
+        width="180"
       >
         <template slot-scope="{row}">
           <span>{{ row.id }}</span>
@@ -101,7 +100,7 @@ getSortClass
       </el-table-column>
       <el-table-column label="圖片網址" width="180px" align="center">
         <template slot-scope="{row}">
-          <img :src="row.picture_url" height="100px" />
+          <img :src="row.picture_url" height="70px" />
           <!-- <span>{{ row.picture_url }}</span> -->
         </template>
       </el-table-column>
@@ -243,7 +242,7 @@ export default class extends Vue {
   private listLoading = true;
   private listQuery = {
     page: 1,
-    limit: 20,
+    limit: 5,
     name: undefined,
     description: undefined,
     category: undefined
@@ -298,7 +297,7 @@ export default class extends Vue {
     this.listLoading = true
     const { data } = await getProducts(this.listQuery)
     this.list = data
-    this.total = (await getTotal()).data.count
+    this.total = Number((await getTotal()).data[0].count)
     // Just to simulate the time of the request
     setTimeout(() => {
       this.listLoading = false
