@@ -17,6 +17,6 @@ COPY . .
 
 # build app for production with minification
 RUN yarn build
-
+ENV PORT=80
 EXPOSE 80
 CMD [ "http-server", "dist" ]
