@@ -38,5 +38,4 @@ jobs:
           context: .
           file: Dockerfile
           tags: |
-            ${{ env.IMAGE }}:${{ steps.prep.outputs.BUILD_ID }}
-            latest
+            ${{ env.IMAGE }}:${{ steps.prep.outputs.BUILD_ID }},${{ env.IMAGE }}:latest
