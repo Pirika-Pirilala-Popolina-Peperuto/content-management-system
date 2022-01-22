@@ -203,7 +203,7 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { Form } from 'element-ui'
 import { cloneDeep } from 'lodash'
-import { getProducts, defaultProductData, createProducts, updateProduct, getTotal } from '@/api/products'
+import { getProducts, defaultProductData, createProducts, updateProduct, getTotal, deleteProducts } from '@/api/products'
 import { getCategories } from '@/api/categories'
 import { ICategoryData, IProductData } from '@/api/types'
 import Pagination from '@/components/Pagination/index.vue'
@@ -380,7 +380,8 @@ export default class extends Vue {
     })
   }
 
-  private handleDelete(row: any, index: number) {
+  private async handleDelete(row: any, index: number) {
+    await deleteProducts(row.id)
     this.$notify({
       title: 'Success',
       message: 'Delete Successfully',
